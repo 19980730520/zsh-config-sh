@@ -1,18 +1,32 @@
 #!/bin/bash
 
-# 检查并安装 coreutils
-if ! command -v gls &> /dev/null; then
-    brew install coreutils
-else
-    echo "coreutils is already installed."
+# 检查系统类型
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+
+    # 检查并安装 Homebrew
+    if ! command -v brew &> /dev/null; then
+        echo "Homebrew 未安装。正在安装 Homebrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    else
+        echo "Homebrew 已安装！."
+    fi
+
+    # 检查并安装 coreutils
+    if ! command -v gls &> /dev/null; then
+        echo "coreutils 未安装。正在安装 coreutils..."
+        brew install coreutils
+    else
+        echo "coreutils 已安装！."
+    fi
 fi
 
 # 检查并创建插件目录
 if [ ! -d ~/.zsh ]; then
-    echo "Creating ~/.zsh directory..."
+    echo "创建 ~/.zsh 目录..."
     mkdir -p ~/.zsh
 else
-    echo "~/.zsh directory already exists."
+    echo "~/.zsh 目录已存在."
 fi
 
 
@@ -22,10 +36,10 @@ cd ~/.zsh
 # 克隆所需插件，如果目录不存在
 clone_if_not_exists() {
     if [ ! -d "$1" ]; then
-        echo "Cloning $1..."
+        echo "克隆 $1..."
         git clone "$2" "$1"
     else
-        echo "$1 already exists."
+        echo "$1 已存在."
     fi
 }
 
